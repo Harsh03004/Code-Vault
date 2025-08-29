@@ -1,0 +1,35 @@
+{
+  "name": "code-vault",
+  "version": "1.0.0",
+  "description": "A secure, client-side encryption vault with an AI-powered code assistant",
+  "main": "index.js",
+"scripts": {
+  "compile:wasm": "emcc ./cpp_encryption/encryption_wrapper.cpp -o ./frontend/vault.js -s WASM=1 -s EXPORTED_RUNTIME_METHODS=\"['cwrap']\" -O3",
+  "start:backend": "nodemon ./backend/server.js",
+  "start:frontend": "serve ./frontend -l 5000",
+  "dev": "concurrently \"npm:start:backend\" \"npm:start:frontend\""
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harsh03004/Code-Vault.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Harsh03004/Code-Vault/issues"
+  },
+  "homepage": "https://github.com/Harsh03004/Code-Vault#readme",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.10",
+    "serve": "^14.2.4"
+  }
+}
