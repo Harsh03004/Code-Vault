@@ -1,21 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Code Vault</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>Code Vault</h1>
-    <textarea id="editor" placeholder="Paste your code here..."></textarea>
-    <input type="password" id="password" placeholder="Enter encryption key">
-    <button id="encryptBtn">Encrypt</button>
-    <button id="decryptBtn">Decrypt</button>
-    <button id="aiBtn">Analyze with AI</button>
-    <h2>AI Analysis:</h2>
-    <pre id="ai-output">AI results will appear here...</pre>
+    <link rel="stylesheet" href="style.css" />
+    <!-- CodeMirror CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css"
+    />
+    <link
+      rel="stylesheet"
+      <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material-darker.min.css"
+    />
+  </head>
+  <body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+      <div class="logo">Code Vault</div>
+      <div class="nav-links">
+        <button>Dashboard</button>
+        <button class="active">Vault</button>
+        <button>AI Assistant</button>
+        <button>Settings</button>
+        <button>Profile</button>
+      </div>
+    </nav>
 
+    <!-- Main Layout -->
+    <div class="main-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <input
+          type="text"
+          placeholder="Search snippets..."
+          class="search-bar"
+        />
+        <ul class="snippet-list">
+          <li>Project_Orion</li>
+          <li>API_Keys_Store</li>
+          <li>Quantum_Sort</li>
+          <li>NeuralNet_Sort</li>
+        </ul>
+        <div class="sidebar-buttons">
+          <button class="add-btn">Add New Snippet</button>
+          <button class="encrypt-btn">Encrypt/Decrypt</button>
+        </div>
+      </aside>
+
+      <!-- Editor + AI Assistant -->
+      <div class="workspace">
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <button>Run AI Analysis</button>
+          <button>Explain Code</button>
+          <button>Generate Docs</button>
+          <button>Optimize</button>
+        </div>
+
+        <div class="editor-assistant">
+          <!-- Code Editor -->
+          <div class="editor" id="editor"></div>
+
+          <!-- AI Assistant -->
+          <aside class="assistant">
+            <h3>AI Assistant</h3>
+            <div class="chat-window" id="chat-window">
+              <div class="user-msg">Explain the quantum_sort algorithm.</div>
+              <div class="ai-msg">
+                The quantum sort algorithm utilizes quantum principles...
+              </div>
+            </div>
+            <div class="chat-input">
+              <input
+                type="text"
+                id="assistant-input"
+                placeholder="Message AI Assistant..."
+              />
+              <button id="send-btn">Send</button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
     <script src="vault.js"></script>
+    <!-- from repo -->
     <script src="app.js"></script>
-</body>
+    <!-- your script, we'll merge logic -->
+  </body>
 </html>
