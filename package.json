@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "A secure, client-side encryption vault with an AI-powered code assistant",
   "main": "index.js",
-"scripts": {
-  "compile:wasm": "emcc ./cpp_encryption/encryption_wrapper.cpp -o ./frontend/vault.js -s WASM=1 -s EXPORTED_RUNTIME_METHODS=\"['cwrap']\" -O3",
-  "start:backend": "nodemon ./backend/server.js",
-  "start:frontend": "serve ./frontend -l 5000",
-  "dev": "concurrently \"npm:start:backend\" \"npm:start:frontend\""
-},
+  "scripts": {
+    "compile:wasm": "emcc ./cpp_encryption/encryption_wrapper.cpp -o ./frontend/vault.js -s WASM=1 -s EXPORTED_RUNTIME_METHODS=\"['cwrap']\" -O3",
+    "start:backend": "nodemon ./backend/server.js",
+    "start:frontend": "serve ./frontend -l 5000",
+    "dev": "concurrently \"npm:start:backend\" \"npm:start:frontend\""
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Harsh03004/Code-Vault.git"
@@ -23,9 +23,12 @@
   "homepage": "https://github.com/Harsh03004/Code-Vault#readme",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.2"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
