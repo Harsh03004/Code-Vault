@@ -174,3 +174,8 @@ TEST_*.txt
 diagnose-*.js
 test-*.html
 test-*.js
+
+# Emscripten SDK (too large for Git - users should download separately)
+emsdk/
+!emsdk/compile.bat
+!emsdk/README.md

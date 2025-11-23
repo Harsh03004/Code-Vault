@@ -2,7 +2,7 @@
 
 > A secure, AI-powered code snippet manager with military-grade AES-256 encryption
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) -->
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green.svg)](https://www.mongodb.com/)
 
@@ -175,7 +175,24 @@ REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
 REFRESH_TOKEN_EXPIRES=7d
 ```
 
-#### 4. Compile C++ to WebAssembly
+#### 4. Setup Emscripten SDK
+
+**⚠️ Important:** The Emscripten SDK is NOT included in the repository due to its large size (~500MB+).
+
+**Download and Install:**
+1. Go to [Emscripten Releases](https://github.com/emscripten-core/emsdk/releases)
+2. Download the latest `emsdk-main.zip`
+3. Extract to the `emsdk/` folder in this project
+4. Run installation:
+   ```bash
+   cd emsdk
+   emsdk install latest
+   emsdk activate latest
+   ```
+
+**Detailed instructions:** See [emsdk/README.md](./emsdk/README.md)
+
+#### 5. Compile C++ to WebAssembly
 
 **Option A: Using the batch file (Windows)**
 ```bash
@@ -192,6 +209,8 @@ emcc ./cpp_encryption/aes.cpp ./cpp_encryption/encryption_wrapper.cpp -o ./front
 ```
 
 This generates `vault.js` and `vault.wasm` in the `frontend` folder.
+
+**Note:** The generated WASM files ARE included in Git, so you only need to compile if you modify the C++ code.
 
 ---
 
