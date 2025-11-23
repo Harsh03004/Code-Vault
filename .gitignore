@@ -69,6 +69,9 @@ web_modules/
 .env
 .env.*
 !.env.example
+.env.local
+.env.development
+.env.production
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -125,6 +128,15 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
+# IDE folders
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
 # yarn v3
 .pnp.*
 .yarn/*
@@ -137,3 +149,28 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Kiro IDE folders and files
+.kiro/
+.kiro/**/*
+
+# Documentation folders
+docs/
+docs/**/*
+
+# Test reports
+test-reports/
+test-reports/**/*
+
+# Summary and execution files (exclude from git)
+*SUMMARY*.md
+*SUMMARY*.txt
+*EXECUTION*.txt
+*EXECUTION*.md
+TASK_*.md
+TEST_*.txt
+
+# Diagnostic and test files
+diagnose-*.js
+test-*.html
+test-*.js

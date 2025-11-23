@@ -119,14 +119,22 @@ sendBtn.addEventListener("click", async () => {
     const response = await fetch("http://localhost:3000/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: msg }),
+      body: JSON.stringify({ 
+        message: msg,
+        code: codeMirrorEditor.getValue() // Include current code as context
+      }),
     });
+
+    if (!response.ok) {
+      const errorResult = await response.json();
+      throw new Error(errorResult.error || `Server error: ${response.statusText}`);
+    }
 
     const data = await response.json();
     aiMsg.innerText = data.reply || "AI didn’t respond.";
   } catch (error) {
     console.error("Chat Error:", error);
-    aiMsg.innerText = "Error connecting to AI server.";
+    aiMsg.innerText = `Error: ${error.message}`;
   }
 
   chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -136,34 +144,77 @@ sendBtn.addEventListener("click", async () => {
 // --- Toolbar Buttons for AI features ---
 const toolbarButtons = document.querySelectorAll(".toolbar button");
 
+// Map button text to action types for /api/action endpoint
+const actionMap = {
+  "Explain Code": "explain",
+  "Generate Docs": "document",
+  "Optimize": "optimize"
+};
+
 toolbarButtons.forEach((btn) => {
   btn.addEventListener("click", async () => {
-    const action = btn.innerText;
+    const buttonText = btn.innerText;
     const code = codeMirrorEditor.getValue();
 
+    // Validate code is not empty
     if (!code.trim()) {
       alert("Please write or paste some code first!");
       return;
     }
 
+    // Add loading message to chat window
     const aiMsg = document.createElement("div");
     aiMsg.className = "ai-msg";
-    aiMsg.innerText = `${action} in progress...`;
+    aiMsg.innerText = `${buttonText} in progress...`;
     chatWindow.appendChild(aiMsg);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
     try {
-      const response = await fetch("http://localhost:3000/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, action }),
-      });
-      const result = await response.json();
-      aiMsg.innerText = result.analysis || "No response from AI.";
+      let response, result;
+
+      // "Run AI Analysis" uses /api/analyze, others use /api/action
+      if (buttonText === "Run AI Analysis") {
+        response = await fetch("http://localhost:3000/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+
+        if (!response.ok) {
+          const errorResult = await response.json();
+          throw new Error(errorResult.error || `Server error: ${response.statusText}`);
+        }
+
+        result = await response.json();
+        aiMsg.innerText = result.analysis || "No response from AI.";
+      } else {
+        // Use /api/action endpoint for other toolbar actions
+        const action = actionMap[buttonText];
+        
+        if (!action) {
+          throw new Error(`Unknown action for button: ${buttonText}`);
+        }
+
+        response = await fetch("http://localhost:3000/api/action", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, action }),
+        });
+
+        if (!response.ok) {
+          const errorResult = await response.json();
+          throw new Error(errorResult.error || `Server error: ${response.statusText}`);
+        }
+
+        result = await response.json();
+        aiMsg.innerText = result.result || "No response from AI.";
+      }
     } catch (error) {
-      console.error(`${action} Error:`, error);
-      aiMsg.innerText = `Error performing ${action}`;
+      console.error(`${buttonText} Error:`, error);
+      aiMsg.innerText = `Error: ${error.message}`;
     }
+
+    chatWindow.scrollTop = chatWindow.scrollHeight;
   });
 });
 

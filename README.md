@@ -1,133 +1,441 @@
-# Code-Vault
-A secure, client-side encryption vault with an AI-powered code assistant
+# 🔐 Code Vault
 
-## About The Project
+> A secure, AI-powered code snippet manager with military-grade AES-256 encryption
 
-Code Vault is a secure web application designed for developers to store, manage, and analyze sensitive code snippets. It provides a zero-knowledge, client-side encryption environment using C++/WebAssembly, ensuring that user data and passwords are never sent to a server. The application is enhanced with an integrated AI assistant (powered by Google Gemini) to provide intelligent code analysis, documentation, and optimization on user request.
-
-### Key Features
-
-* **🔒 Client-Side Encryption:** All encryption and decryption happens in your browser. Nothing unencrypted ever leaves your machine.
-* **🚀 High-Performance:** Uses a C++ engine compiled to WebAssembly (WASM) for near-native encryption speed.
-* **🤖 AI Code Assistant:** Get AI-powered insights on your code for:
-    * Security Vulnerability Scanning
-    * Automated Code Documentation
-    * Performance and Logic Optimization
-* **⚙️ Simple & Automated Workflow:** A unified `npm` script setup for easy installation and development.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green.svg)](https://www.mongodb.com/)
 
 ---
-## Tech Stack
 
-* **Core Engine:** C++ / WebAssembly (via Emscripten)
-* **Frontend:** HTML, CSS, JavaScript
-* **Backend:** Node.js / Express.js
-* **AI Integration:** Google Gemini API
-* **Development Tools:** `nodemon` for live server reloading, `concurrently` to run servers simultaneously, `serve` for the frontend.
+## � About- The Project
+
+**Code Vault** is a professional-grade web application for developers to securely store, manage, and analyze code snippets. It combines **AES-256-CBC encryption** (compiled from C++ to WebAssembly) with **AI-powered code analysis** using Google's Gemini API.
+
+### ✨ Key Features
+
+* **🔒 Military-Grade Encryption**
+  - AES-256-CBC encryption implemented in C++
+  - Compiled to WebAssembly for near-native performance
+  - Client-side encryption - your code never leaves unencrypted
+
+* **🤖 AI Code Assistant**
+  - Security vulnerability scanning
+  - Code explanation and documentation
+  - Performance optimization suggestions
+  - Interactive chat with context awareness
+
+* **📝 Snippet Management**
+  - Save and organize code snippets
+  - Encrypted snippet support
+  - Search and filter functionality
+  - Dashboard with visual preview
+
+* **👤 User Authentication**
+  - JWT-based authentication
+  - Secure password hashing (bcrypt)
+  - Profile management
+  - Session handling
 
 ---
-## Getting Started
 
-Follow these steps to get a local copy up and running.
+## 🏗️ Tech Stack
 
-### Step 0: Prerequisites & Emsdk Setup
+### **Backend**
+- **Runtime:** Node.js 18+
+- **Framework:** Express.js
+- **Database:** MongoDB Atlas
+- **Authentication:** JWT + bcrypt
+- **AI:** Google Gemini API
 
-Before you begin, ensure you have the following tools installed.
+### **Frontend**
+- **Editor:** CodeMirror
+- **Encryption:** C++ → WebAssembly (Emscripten)
+- **Styling:** Custom CSS
+- **Architecture:** ES6 Modules
 
-**1. Node.js and npm**
-* Download and install from the official website: [https://nodejs.org/](https://nodejs.org/)
+### **Encryption**
+- **Algorithm:** AES-256-CBC
+- **Language:** C++
+- **Compiler:** Emscripten
+- **Output:** WebAssembly
 
-**2. A C++ Compiler**
-* **Windows:** Install the "Desktop development with C++" workload from the [Visual Studio Installer](https://visualstudio.microsoft.com/downloads/).
-* **Mac/Linux:** Install `g++` or `clang` via your system's package manager.
+---
 
-**3. Emscripten SDK (Emsdk)**
-This is the toolchain that compiles C++ to WebAssembly.
-* **Download:** Go to the [Emsdk releases page](https://github.com/emscripten-core/emsdk/releases) and download the latest `emsdk-main.zip` file for your operating system.
-* **Unzip:** Unzip the folder to a permanent location on your computer with **no spaces in the file path** (e.g., `D:\sdks\emsdk` is good, but `D:\My Tools\emsdk` is bad). For this project, you can simply unzip it inside your `Code-Vault` project folder.
-* **Install:** Open a terminal (CMD or PowerShell), navigate into the unzipped `emsdk` folder, and run the following commands:
-    ```sh
-    # Download and install the latest SDK tools
-    ./emsdk install latest
-    
-    # Make the "latest" SDK the active one
-    ./emsdk activate latest
-    ```
-* This setup process only needs to be done once.
+## 📁 Project Structure
+
+```
+Code-Vault/
+├── backend/                    # Backend (Node.js + Express)
+│   ├── controllers/           # Business logic
+│   │   ├── auth.controller.js
+│   │   ├── user.controller.js
+│   │   ├── snippet.controller.js
+│   │   └── ai.controller.js
+│   ├── models/                # MongoDB schemas
+│   │   ├── User.model.js
+│   │   └── Snippet.model.js
+│   ├── routes/                # API routes
+│   │   ├── auth.routes.js
+│   │   ├── user.routes.js
+│   │   ├── snippet.routes.js
+│   │   └── ai.routes.js
+│   ├── middlewares/           # Express middlewares
+│   │   └── auth.middleware.js
+│   ├── utils/                 # Utility functions
+│   │   ├── database.util.js
+│   │   └── gemini.util.js
+│   └── server.js              # Main server file
+│
+├── frontend/                   # Frontend (HTML + JS + CSS)
+│   ├── js/                    # JavaScript modules
+│   │   ├── config.js          # API configuration
+│   │   ├── utils.js           # Utility functions
+│   │   ├── editor.js          # CodeMirror & AI
+│   │   ├── encryption.js      # WASM handlers
+│   │   ├── snippet-manager.js # Snippet CRUD
+│   │   ├── snippet-save.js    # Save functionality
+│   │   ├── dashboard.js       # Dashboard logic
+│   │   └── app-init.js        # App initialization
+│   ├── assets/                # Static files
+│   ├── index.html             # Main editor
+│   ├── dashboard.html         # Snippets dashboard
+│   ├── login.html             # Authentication
+│   ├── register.html          # User registration
+│   ├── profile.html           # User profile
+│   ├── style.css              # Global styles
+│   ├── vault.js               # WASM wrapper (generated)
+│   └── vault.wasm             # AES-256 binary (generated)
+│
+├── cpp_encryption/             # C++ Encryption Source
+│   ├── aes.h                  # AES-256 header
+│   ├── aes.cpp                # AES-256 implementation
+│   └── encryption_wrapper.cpp # WASM wrapper
+│
+├── emsdk/                      # Emscripten SDK
+│   └── compile.bat            # Compilation script
+│
+├── .env                        # Environment variables (not in Git)
+├── .gitignore                 # Git ignore rules
+├── package.json               # Dependencies
+├── PROJECT_STRUCTURE.md       # Detailed structure
+├── ORGANIZATION_COMPLETE.md   # Organization summary
+└── README.md                  # This file
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Before you begin, ensure you have:
+
+1. **Node.js 18+** - [Download](https://nodejs.org/)
+2. **MongoDB Atlas Account** - [Sign up](https://www.mongodb.com/cloud/atlas)
+3. **Google Gemini API Key** - [Get key](https://aistudio.google.com/app/apikey)
+4. **C++ Compiler** (for WASM compilation)
+   - Windows: Visual Studio with C++ workload
+   - Mac/Linux: g++ or clang
 
 ### Installation
 
-1.  **Clone the Repository**
-    ```sh
-    git clone [https://github.com/your-username/code-vault.git](https://github.com/your-username/code-vault.git)
-    cd code-vault
-    ```
+#### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/Code-Vault.git
+cd Code-Vault
+```
 
-2.  **Create the Environment File**
-    * In the `backend` folder, create a new file named `.env`.
-    * Add your Gemini API key to this file. (See instructions [here](https://aistudio.google.com/app/apikey) on how to get one).
-    ```
-    GEMINI_API_KEY=your_secret_api_key_here
-    ```
+#### 2. Install Dependencies
+```bash
+# Install backend dependencies
+cd backend
+npm install
+cd ..
+```
 
-3.  **Install All Dependencies**
-    * From the **root `code-vault` directory**, run the following command. This will install all backend libraries and development tools at once.
-    ```sh
-    npm install
-    ```
+#### 3. Setup Environment Variables
 
----
-## Usage / Workflow
+Create a `.env` file in the `backend` folder:
 
-The project is now set up. Follow these steps to compile the C++ code and run the application.
+```env
+# Gemini AI
+GEMINI_API_KEY=your_gemini_api_key_here
 
-### Step 1: Compile the C++ to WebAssembly (One-Time Step)
+# Server
+PORT=3000
 
-You must run this command from the special **Emsdk Command Prompt**.
+# MongoDB
+MONGO_URI=your_mongodb_connection_string
 
-1.  Using your **File Explorer**, navigate to your `emsdk` folder.
-2.  Find and **double-click** the file named `emcmdprompt.bat` (or `emsdk_cmd.bat`).
-3.  A new command prompt window will open with the correct environment. In this **new window**, navigate to your **root project directory**:
-    ```cmd
-    cd /d "path\to\your\code-vault"
-    ```
-4.  Now, run the compile script:
-    ```cmd
-    npm run compile:wasm
-    ```
-    This will create `vault.js` and `vault.wasm` in your `frontend` folder. You only need to repeat this step if you change the C++ code in `cpp_encryption`.
+# JWT Secrets
+ACCESS_TOKEN_SECRET=your_access_token_secret_here
+ACCESS_TOKEN_EXPIRES=1d
+REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
+REFRESH_TOKEN_EXPIRES=7d
+```
 
-### Step 2: Run the Development Server
+#### 4. Compile C++ to WebAssembly
 
-1.  You can now close the Emsdk prompt. Open a **regular terminal** (like PowerShell or CMD).
-2.  Navigate to your **root `code-vault` directory**.
-3.  Run the main development command:
-    ```sh
-    npm run dev
-    ```
-4.  Your terminal will show logs from both the backend (on port 3000) and frontend (on port 5000) starting up.
+**Option A: Using the batch file (Windows)**
+```bash
+cd emsdk
+./compile.bat
+```
 
-### Step 3: Access the Application
+**Option B: Manual compilation**
+```bash
+cd emsdk
+./emsdk_env.bat
+cd ..
+emcc ./cpp_encryption/aes.cpp ./cpp_encryption/encryption_wrapper.cpp -o ./frontend/vault.js -s WASM=1 -s EXPORTED_RUNTIME_METHODS=[cwrap] -s ALLOW_MEMORY_GROWTH=1 -O3
+```
 
-* Your backend server is running on `http://localhost:3000`.
-* Your frontend application is running on **`http://localhost:5000`**.
-* Open your web browser and navigate to **`http://localhost:5000`** to use Code Vault.
+This generates `vault.js` and `vault.wasm` in the `frontend` folder.
 
 ---
-## Project Structure
 
-```plaintext
-code-vault/
-├── .gitignore
-├── README.md
-├── .env              # <-- Your secret API key goes here
-├── package.json
-├── backend/
-│   └── server.js         # <-- The Node.js AI gateway 
-├── cpp_encryption/
-│   └── encryption_wrapper.cpp
-├── frontend/
-│   ├── app.js            # <-- Main frontend logic
-│   ├── index.html
-│   ├── style.css
-│   ├── vault.js          # <-- Generated by the compiler
-│   └── vault.wasm        # <-- Generated by the compiler
+## 🎮 Usage
+
+### Start the Backend Server
+```bash
+cd backend
+npm run dev
+```
+Server runs on `http://localhost:3000`
+
+### Start the Frontend Server
+```bash
+cd frontend
+# Use Live Server extension in VSCode
+# Or use any static file server
+npx serve
+```
+Frontend runs on `http://localhost:5000` (or your server's port)
+
+### Access the Application
+Open your browser and navigate to `http://localhost:5000`
+
+---
+
+## 📚 API Documentation
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/register` | Register new user |
+| POST | `/api/login` | Login user |
+| POST | `/api/logout` | Logout user |
+
+### User Endpoints (Protected)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/profile` | Get user profile |
+| PUT | `/api/profile` | Update profile |
+| POST | `/api/change-password` | Change password |
+
+### Snippet Endpoints (Protected)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/snippets` | Get all snippets |
+| POST | `/api/snippets` | Create snippet |
+| GET | `/api/snippets/:id` | Get snippet by ID |
+| PUT | `/api/snippets/:id` | Update snippet |
+| DELETE | `/api/snippets/:id` | Delete snippet |
+
+### AI Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/analyze` | Analyze code |
+| POST | `/api/chat` | Chat with AI |
+| POST | `/api/action` | Perform AI action |
+
+---
+
+## 🔐 Security Features
+
+### Encryption
+- **Algorithm:** AES-256-CBC
+- **Key Derivation:** Password-based
+- **IV:** Random 16-byte initialization vector
+- **Padding:** PKCS7
+- **Implementation:** C++ compiled to WebAssembly
+
+### Authentication
+- **JWT Tokens:** Access & refresh tokens
+- **Password Hashing:** bcrypt with salt rounds
+- **HTTP-only Cookies:** Secure token storage
+- **CORS:** Configured origins
+
+### Data Protection
+- **Client-side Encryption:** Code encrypted before storage
+- **Environment Variables:** Sensitive data in .env
+- **Input Validation:** All inputs validated
+- **XSS Protection:** HTML escaping
+
+---
+
+## 🎯 Features in Detail
+
+### Code Editor
+- Syntax highlighting (CodeMirror)
+- Multiple language support
+- Line numbers
+- Auto-completion
+- Theme: Material Darker
+
+### AI Assistant
+- **Analyze:** Security vulnerability scanning
+- **Explain:** Detailed code explanation
+- **Document:** Generate documentation
+- **Optimize:** Performance suggestions
+- **Chat:** Interactive Q&A with context
+
+### Snippet Management
+- Create, read, update, delete
+- Encryption support
+- Search and filter
+- Sidebar navigation
+- Dashboard view
+
+### User Management
+- Registration with validation
+- Secure login
+- Profile editing
+- Password change
+- Session management
+
+---
+
+## 🛠️ Development
+
+### Project Organization
+
+The codebase follows **MVC architecture** with clear separation of concerns:
+
+- **Models:** Database schemas
+- **Views:** HTML pages
+- **Controllers:** Business logic
+- **Routes:** API endpoints
+- **Middlewares:** Request processing
+- **Utils:** Helper functions
+
+### Adding New Features
+
+**Backend:**
+1. Create controller in `backend/controllers/`
+2. Create route in `backend/routes/`
+3. Import route in `backend/server.js`
+
+**Frontend:**
+1. Create module in `frontend/js/`
+2. Export functions
+3. Import in `frontend/js/app-init.js`
+
+### Code Style
+
+- **ES6 Modules:** Import/export syntax
+- **Async/Await:** For asynchronous operations
+- **Error Handling:** Try/catch blocks
+- **Comments:** Document complex logic
+- **Naming:** Descriptive variable names
+
+---
+
+## 📖 Documentation
+
+<!-- - **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Complete project structure
+- **[ORGANIZATION_COMPLETE.md](./ORGANIZATION_COMPLETE.md)** - Organization summary
+- **[frontend/README.md](./frontend/README.md)** - Frontend module guide -->
+- **[.gitignore.md](./.gitignore.md)** - Git ignore documentation
+
+---
+
+## 🐛 Troubleshooting
+
+### WASM Module Not Loading
+- Ensure `vault.js` and `vault.wasm` are in `frontend/` folder
+- Check browser console for errors
+- Verify WASM compilation was successful
+
+### API Errors
+- Check if backend server is running
+- Verify `BASE_URL` in `frontend/js/config.js`
+- Check authentication token
+
+### Gemini API Errors
+- Verify API key in `.env`
+- Check API key restrictions in Google Cloud Console
+- Ensure Generative Language API is enabled
+
+### MongoDB Connection Issues
+- Verify `MONGO_URI` in `.env`
+- Check MongoDB Atlas network access
+- Ensure database user has proper permissions
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+
+## 👨‍💻 Author
+
+**Your Name**
+- GitHub: [@Harsh03004](https://github.com/Harsh03004)
+
+---
+
+## 🙏 Acknowledgments
+
+- [Emscripten](https://emscripten.org/) - C++ to WebAssembly compiler
+- [CodeMirror](https://codemirror.net/) - Code editor component
+- [Google Gemini](https://ai.google.dev/) - AI API
+- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) - Database hosting
+- [Express.js](https://expressjs.com/) - Web framework
+
+---
+
+## 📊 Project Stats
+
+- **Lines of Code:** ~5,000+
+- **Files:** 30+
+- **Languages:** JavaScript, C++, HTML, CSS
+- **Architecture:** MVC Pattern
+- **Security:** AES-256-CBC Encryption
+
+---
+
+## 🚀 Roadmap
+
+- [ ] Multi-language syntax highlighting
+- [ ] Code snippet sharing
+- [ ] Team collaboration features
+- [ ] Mobile responsive design
+- [ ] Dark/Light theme toggle
+- [ ] Export/Import functionality
+- [ ] Code version history
+- [ ] Advanced search filters
+
+---
+
+## 💡 Support
+
+If you found this project helpful, please give it a ⭐️!
+
+For issues and questions, please open an issue on GitHub.
+
+---
