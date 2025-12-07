@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Code Vault</title>
     <link rel="stylesheet" href="style.css" />
+
     <!-- CodeMirror CSS -->
     <link
       rel="stylesheet"
@@ -12,19 +13,315 @@
     />
     <link
       rel="stylesheet"
-      <link
-      rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material-darker.min.css"
     />
+    <style>
+      /* --- layout basics (preserve your look) --- */
+      :root {
+        --accent: #00f6ff;
+        --bg-panel: #14161c;
+        --muted: #888;
+        --panel-border: rgba(0, 246, 255, 0.2);
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        background: #0f1117;
+        color: #e6eef3;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .navbar {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        padding: 0 18px;
+        background: #14161c;
+        border-bottom: 1px solid #1f222a;
+        color: #cbeff0;
+      }
+
+      .navbar .logo {
+        font-weight: 700;
+        color: var(--accent);
+        margin-right: 20px;
+      }
+
+      .nav-links {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+      }
+
+/* NAV LINKS — White underline active indicator */
+.nav-links button {
+  background: transparent;
+  border: none;
+  color: #cbeff0;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  position: relative;
+}
+
+/* Hover underline animation */
+.nav-links button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0%;
+  height: 2px;
+  background: white;
+  transition: width 0.25s ease;
+  border-radius: 2px;
+}
+
+/* Active page underline */
+.nav-links button.active::after {
+  width: 100%;
+}
+
+/* Remove ugly blue selection outline */
+.nav-links button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.logout-btn {
+      background: #ff4d4d;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin-left: 10px;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+      transform: scale(1.05);
+      background: #ff3434;
+    }
+
+      /* main layout */
+      .main-container {
+        display: flex;
+        height: calc(100vh - 56px);
+        overflow: hidden;
+      }
+
+      aside.sidebar {
+        width: 260px;
+        background: #0e1114;
+        border-right: 1px solid #111316;
+        padding: 12px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar .search-bar {
+        margin: 12px 0;
+      }
+
+      .sidebar .snippet-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      .sidebar-buttons {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .workspace {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0; /* important for inner overflow */
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        padding: 12px;
+        border-bottom: 1px solid #111316;
+        background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+        align-items: center;
+      }
+
+      .editor-assistant {
+        display: flex;
+        gap: 12px;
+        height: 100%;
+        min-height: 0; /* important for flex scroll behavior */
+      }
+
+      /* Editor area */
+      .editor {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        padding: 12px;
+        box-sizing: border-box;
+        background: #0b0c0f;
+        overflow: auto;
+      }
+
+      /* If you initialize CodeMirror on #editor it will fill this area */
+      .CodeMirror {
+        height: calc(100vh - 56px - 48px - 24px); /* navbar + toolbar + padding */
+      }
+
+      /* --- Assistant toggle (small button) --- */
+      .assistant-toggle {
+        position: fixed;
+        right: 27px;
+        top: 65px;
+        background: var(--accent);
+        color: #0f1117;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 6px 18px rgba(0,246,255,0.12);
+        cursor: pointer;
+        z-index: 1100;
+        font-weight: 700;
+      }
+
+      /* --- Sliding Assistant Panel --- */
+      .assistant-panel {
+        position: fixed;
+        top: 0;
+        right: -420px; /* hidden by default */
+        width: 400px;
+        height: 100vh;
+        background: var(--bg-panel);
+        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.6);
+        border-left: 1px solid var(--panel-border);
+        padding: 16px;
+        box-sizing: border-box;
+        transition: right 0.28s cubic-bezier(.22,.9,.35,1);
+        z-index: 1200;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .assistant-panel.open {
+        right: 0;
+      }
+
+      .assistant-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .assistant-header h3 {
+        margin: 0;
+        color: var(--accent);
+        font-size: 1.05rem;
+      }
+
+      .assistant-close {
+        background: transparent;
+        border: none;
+        color: var(--accent);
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      .chat-window {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 6px;
+        margin-bottom: 8px;
+      }
+
+      .chat-window .user-msg,
+      .chat-window .ai-msg {
+        margin-bottom: 10px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        max-width: 85%;
+        line-height: 1.35;
+        white-space: pre-wrap;
+      }
+
+      .chat-window .user-msg {
+        margin-left: auto;
+        background: linear-gradient(180deg, var(--accent), #4fd1c5);
+        color: #0f1117;
+      }
+
+      .chat-window .ai-msg {
+        background: #0f1316;
+        color: #dbeef2;
+      }
+
+      .chat-input {
+        display: flex;
+        gap: 8px;
+      }
+
+      .chat-input input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        background: #0b0e11;
+        border: 1px solid #222528;
+        color: #e6eef3;
+        border-radius: 8px;
+      }
+
+      .chat-input button {
+        background: var(--accent);
+        border: none;
+        color: #0f1117;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      /* When assistant is open we optionally add a subtle overlay on the editor to show focus */
+      .assistant-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 400px; /* leave space where the assistant sits */
+        bottom: 0;
+        background: rgba(0,0,0,0.03);
+        z-index: 1150;
+        display: none;
+      }
+      .assistant-overlay.visible { display:block; }
+
+      /* Responsive: on small screens assistant becomes full overlay */
+      @media (max-width: 900px) {
+        .assistant-panel { width: 100%; right: -100%; }
+        .assistant-panel.open { right: 0; }
+        .assistant-overlay { right: 0; } /* overlay covers everything */
+      }
+    </style>
   </head>
+
   <body>
     <!-- Top Navbar -->
     <nav class="navbar">
       <div class="logo">Code Vault</div>
       <div class="nav-links">
-        <button onclick="window.location.href='dashboard.html'">Dashboard</button>
         <button class="active">Vault</button>
         <button onclick="window.location.href='profile.html'">Profile</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
     </nav>
 
@@ -33,7 +330,7 @@
       <!-- Sidebar -->
       <aside class="sidebar">
         <div id="current-snippet-name" style="padding: 10px; color: #00f6ff; font-weight: bold; text-align: center; border-bottom: 1px solid #2a2d35;">
-          New Snippet
+          Files
         </div>
         <input
           type="text"
@@ -46,7 +343,7 @@
           <li style="color: #888; text-align: center; padding: 20px;">Loading...</li>
         </ul>
         <div class="sidebar-buttons">
-          <button class="add-btn" onclick="createNewSnippet()">Add New Snippet</button>
+          <button class="add-btn" onclick="createNewSnippet()">Add Snippet</button>
           <button class="encrypt-btn" id="encryptBtn">Encrypt/Decrypt</button>
         </div>
       </aside>
@@ -56,45 +353,50 @@
         <!-- Toolbar -->
         <div class="toolbar">
           <button onclick="saveSnippet()" style="background: linear-gradient(90deg, #00f6ff, #4fd1c5); color: #0f1117; font-weight: bold;">💾 Save Code</button>
-          <button>Run AI Analysis</button>
-          <button>Explain Code</button>
-          <button>Generate Docs</button>
-          <button>Optimize</button>
+          <button id="run-analysis">Run AI Analysis</button>
+          <button id="explain-code">Explain Code</button>
+          <button id="generate-docs">Generate Docs</button>
+          <button id="optimize-code">Optimize</button>
         </div>
 
         <div class="editor-assistant">
           <!-- Code Editor -->
           <div class="editor" id="editor"></div>
 
-          <!-- AI Assistant -->
-          <aside class="assistant">
-            <h3>AI Assistant</h3>
-            <div class="chat-window" id="chat-window">
-              <div class="user-msg">Explain the quantum_sort algorithm.</div>
-              <div class="ai-msg">
-                The quantum sort algorithm utilizes quantum principles...
-              </div>
-            </div>
-            <div class="chat-input">
-              <input
-                type="text"
-                id="assistant-input"
-                placeholder="Message AI Assistant..."
-              />
-              <button id="send-btn">Send</button>
-            </div>
-          </aside>
+          <!-- (assistant removed from DOM flow; now slide-in overlay) -->
         </div>
       </div>
     </div>
 
-    <!-- Save Snippet Modal -->
+    <!-- Assistant toggle & panel (overlay) -->
+    <button id="assistantToggle" class="assistant-toggle" aria-expanded="false" title="Open AI Assistant">💬 AI</button>
+
+    <div id="assistantOverlay" class="assistant-overlay" tabindex="-1" aria-hidden="true"></div>
+
+    <aside class="assistant-panel" id="assistantPanel" aria-hidden="true">
+      <div class="assistant-header">
+        <h3>AI Assistant</h3>
+        <button id="closeAssistant" class="assistant-close" aria-label="Close assistant">✖</button>
+      </div>
+
+      <div class="chat-window" id="chat-window" role="log" aria-live="polite">
+        <!-- messages will be appended here -->
+        <div class="ai-msg">Welcome! Ask me to analyze, explain, or optimize your code.</div>
+      </div>
+
+      <div class="chat-input">
+        <input type="text" id="assistant-input" placeholder="Message AI Assistant..." aria-label="Message AI Assistant" />
+        <button id="send-btn">Send</button>
+      </div>
+    </aside>
+
+    <!-- Save Snippet Modal (unchanged) -->
     <div id="saveModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
       <div style="background: #14161c; padding: 30px; border-radius: 12px; box-shadow: 0 0 30px rgba(0, 246, 255, 0.5); max-width: 450px; width: 90%;">
         <h2 style="color: #00f6ff; margin-bottom: 20px;">Save Code Snippet</h2>
-        
+
         <input type="text" id="snippetNameInput" placeholder="Enter snippet name..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #2a2d35; background: #1f222a; color: #e0e0e0; font-size: 1rem; margin-bottom: 15px;" />
-        
+
         <div style="margin-bottom: 15px;">
           <label style="display: flex; align-items: center; color: #e0e0e0; cursor: pointer;">
             <input type="checkbox" id="encryptCheckbox" onchange="toggleEncryptionFields()" style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer;" />
@@ -116,7 +418,7 @@
       </div>
     </div>
 
-    <!-- Decrypt Modal -->
+    <!-- Decrypt Modal (unchanged) -->
     <div id="decryptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
       <div style="background: #14161c; padding: 30px; border-radius: 12px; box-shadow: 0 0 30px rgba(0, 246, 255, 0.5); max-width: 400px; width: 90%;">
         <h2 style="color: #00f6ff; margin-bottom: 20px;">🔓 Decrypt Snippet</h2>
@@ -140,17 +442,103 @@
       }
 
       // Snippet management variables
-      const BASE_URL = 'http://localhost:3000/api';
+      const BASE_URL = 'http://localhost:4000/api';
       let currentSnippetId = null;
       let allSnippets = [];
       let hasUnsavedChanges = false;
     </script>
+
+    <!-- Your existing libraries & app scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+
+    <!-- Your app scripts (load after DOM elements) -->
     <script src="vault.js"></script>
     <script src="app.js"></script>
-    
-    <!-- Snippet Management Script -->
     <script src="snippets.js"></script>
+
+    <!-- Assistant behavior script (keeps separate from your app logic) -->
+    <script>
+      (function () {
+        const assistantToggle = document.getElementById('assistantToggle');
+        const assistantPanel = document.getElementById('assistantPanel');
+        const assistantOverlay = document.getElementById('assistantOverlay');
+        const closeAssistant = document.getElementById('closeAssistant');
+        const sendBtn = document.getElementById('send-btn');
+        const inputEl = document.getElementById('assistant-input');
+        const chatWindow = document.getElementById('chat-window');
+
+        function openAssistant() {
+          assistantPanel.classList.add('open');
+          assistantPanel.setAttribute('aria-hidden', 'false');
+          assistantToggle.setAttribute('aria-expanded', 'true');
+          assistantOverlay.classList.add('visible');
+          assistantOverlay.setAttribute('aria-hidden', 'false');
+          inputEl.focus();
+        }
+
+        function closeAssistantPanel() {
+          assistantPanel.classList.remove('open');
+          assistantPanel.setAttribute('aria-hidden', 'true');
+          assistantToggle.setAttribute('aria-expanded', 'false');
+          assistantOverlay.classList.remove('visible');
+          assistantOverlay.setAttribute('aria-hidden', 'true');
+          assistantToggle.focus();
+        }
+
+        assistantToggle.addEventListener('click', openAssistant);
+        closeAssistant.addEventListener('click', closeAssistantPanel);
+        //assistantOverlay.addEventListener('click', closeAssistantPanel);
+
+        // Send message (basic local append; integrate with your AI endpoints in app.js)
+        function appendMessage(content, type = 'ai') {
+          const el = document.createElement('div');
+          el.className = type === 'user' ? 'user-msg' : 'ai-msg';
+          el.textContent = content;
+          chatWindow.appendChild(el);
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', async () => {
+          const text = inputEl.value.trim();
+          if (!text) return;
+          appendMessage(text, 'user');
+          inputEl.value = '';
+          // Simple placeholder response while your app handles actual AI call
+          appendMessage('Thinking...', 'ai');
+
+          // If you want to call your backend AI from here, you can:
+          // const res = await fetch(`${BASE_URL}/api/chat`, { method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${accessToken}`}, body: JSON.stringify({ message: text, code: window.getCurrentCode ? window.getCurrentCode() : '' })});
+          // const json = await res.json();
+          // replace 'Thinking...' with real reply etc.
+        });
+
+inputEl.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    sendBtn.click();
+  }
+});
+
+
+        // Accessibility: close panel on Escape
+        /*document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && assistantPanel.classList.contains('open')) {
+            closeAssistantPanel();
+          }
+        });*/
+
+        // Expose open/close for other scripts if needed
+        window.openAssistant = openAssistant;
+        window.closeAssistantPanel = closeAssistantPanel;
+        window.appendAssistantMessage = appendMessage;
+      })();
+
+      function logout() {
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
+
+    </script>
+    
   </body>
 </html>

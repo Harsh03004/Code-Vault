@@ -1,7 +1,7 @@
 import { User } from '../models/User.model.js';
 import jwt from 'jsonwebtoken';
 
-const generateAccessAndRefreshToken = async (userId) => {
+/*const generateAccessAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
     const accessToken = user.generateAccessToken();
@@ -13,6 +13,40 @@ const generateAccessAndRefreshToken = async (userId) => {
     return { accessToken, refreshToken };
   } catch (error) {
     throw new Error('Error generating tokens');
+  }
+};
+*/
+
+const generateAccessAndRefreshToken = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+
+    console.log("Fetched User:", user);
+    console.log("generateAccessToken exists?", typeof user?.generateAccessToken);
+    console.log("generateRefreshToken exists?", typeof user?.generateRefreshToken);
+
+    if (!user) {
+      throw new Error("User not found while generating tokens");
+    }
+
+    if (typeof user.generateAccessToken !== "function") {
+      throw new Error("generateAccessToken is NOT a function on this user");
+    }
+
+    if (typeof user.generateRefreshToken !== "function") {
+      throw new Error("generateRefreshToken is NOT a function on this user");
+    }
+
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    console.error("Token generation error:", error);
+    throw error;
   }
 };
 

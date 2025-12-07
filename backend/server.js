@@ -15,13 +15,21 @@ dotenv.config();
 
 // Initialize express app
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5000', 'http://localhost:3000', 'http://127.0.0.1:5000', 'http://127.0.0.1:3000'],
+  origin: [
+    'http://localhost:5000',
+    'http://localhost:3000',
+    'http://127.0.0.1:5000',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5500',  // <-- add this
+    'http://localhost:5500'    // optionally add localhost:5500
+  ],
   credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 

@@ -11,7 +11,9 @@ export const codeMirrorEditor = CodeMirror(document.getElementById("editor"), {
 }`,
 });
 
-// Initialize AI Chat
+// -------------------
+// AI Chat Module
+// -------------------
 export function initializeChat() {
   const chatWindow = document.getElementById("chat-window");
   const input = document.getElementById("assistant-input");
@@ -19,7 +21,8 @@ export function initializeChat() {
 
   if (!sendBtn) return;
 
-  sendBtn.addEventListener("click", async () => {
+  // Unified send function
+  async function sendMessage() {
     const msg = input.value.trim();
     if (!msg) return;
 
@@ -29,7 +32,7 @@ export function initializeChat() {
     userMsg.innerText = msg;
     chatWindow.appendChild(userMsg);
 
-    // Show loading
+    // Add loading AI message
     const aiMsg = document.createElement("div");
     aiMsg.className = "ai-msg";
     aiMsg.innerText = "Thinking...";
@@ -47,8 +50,8 @@ export function initializeChat() {
       });
 
       if (!response.ok) {
-        const errorResult = await response.json();
-        throw new Error(errorResult.error || `Server error: ${response.statusText}`);
+        const err = await response.json();
+        throw new Error(err.error || `Server error: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -58,12 +61,25 @@ export function initializeChat() {
       aiMsg.innerText = `Error: ${error.message}`;
     }
 
-    chatWindow.scrollTop = chatWindow.scrollHeight;
     input.value = "";
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  // Button click
+  sendBtn.addEventListener("click", sendMessage);
+
+  // Enter key
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendMessage();
+    }
   });
 }
 
-// Initialize Toolbar Buttons
+// -------------------
+// Toolbar Module
+// -------------------
 export function initializeToolbar() {
   const toolbarButtons = document.querySelectorAll(".toolbar button");
   const chatWindow = document.getElementById("chat-window");
@@ -71,7 +87,7 @@ export function initializeToolbar() {
   const actionMap = {
     "Explain Code": "explain",
     "Generate Docs": "document",
-    "Optimize": "optimize"
+    "Optimize": "optimize",
   };
 
   toolbarButtons.forEach((btn) => {
@@ -81,6 +97,12 @@ export function initializeToolbar() {
 
       if (!code.trim()) {
         alert("Please write or paste some code first!");
+        return;
+      }
+
+      // Handle Save Code separately
+      if (buttonText === "💾 Save Code") {
+        saveSnippet(); // your existing function
         return;
       }
 
@@ -101,17 +123,17 @@ export function initializeToolbar() {
           });
 
           if (!response.ok) {
-            const errorResult = await response.json();
-            throw new Error(errorResult.error || `Server error: ${response.statusText}`);
+            const err = await response.json();
+            throw new Error(err.error || `Server error: ${response.statusText}`);
           }
 
           result = await response.json();
           aiMsg.innerText = result.analysis || "No response from AI.";
         } else {
           const action = actionMap[buttonText];
-          
           if (!action) {
-            throw new Error(`Unknown action for button: ${buttonText}`);
+            aiMsg.innerText = `Unknown action for button: ${buttonText}`;
+            return;
           }
 
           response = await fetch(`${BASE_URL}/action`, {
@@ -121,8 +143,8 @@ export function initializeToolbar() {
           });
 
           if (!response.ok) {
-            const errorResult = await response.json();
-            throw new Error(errorResult.error || `Server error: ${response.statusText}`);
+            const err = await response.json();
+            throw new Error(err.error || `Server error: ${response.statusText}`);
           }
 
           result = await response.json();

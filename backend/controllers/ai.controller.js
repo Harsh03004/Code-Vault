@@ -13,7 +13,7 @@ export const analyzeCode = async (req, res) => {
     const clipped = code.length > MAX_CHARS;
     const codeSlice = clipped ? code.slice(0, MAX_CHARS) : code;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const prompt = `Analyze the following code for security vulnerabilities and suggest fixes. Be concise and clear.${clipped ? " NOTE: The code was truncated for length." : ""}\n\nCODE:\n\n${codeSlice}`;
 
     const result = await callWithRetry(() => model.generateContent(prompt));
@@ -35,7 +35,7 @@ export const chatWithAI = async (req, res) => {
       return res.status(400).json({ error: 'Missing message in request.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     let prompt = `You are a helpful coding assistant. The user has asked: ${message}\n\n`;
 
     if (code && code.trim().length > 0) {
@@ -73,7 +73,7 @@ export const performAction = async (req, res) => {
     const clipped = code.length > MAX_CHARS;
     const codeSlice = clipped ? code.slice(0, MAX_CHARS) : code;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     let prompt;
 
     switch (action) {
