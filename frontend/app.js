@@ -1,10 +1,11 @@
 // ----------------------
 // Initialize CodeMirror
 // ----------------------
-const codeMirrorEditor = CodeMirror(document.getElementById("editor"), {
+window.codeMirrorEditor = CodeMirror(document.getElementById("editor"), {
   mode: "javascript",
   theme: "material-darker",
   lineNumbers: true,
+  lineWrapping: true, // ✅ very important
   value: `function quantum_sort(arr) {\n  return arr.sort();\n}`,
 });
 
@@ -28,7 +29,15 @@ function appendMessage(msg, type = "ai") {
 // Open assistant panel if closed
 function ensureAssistantOpen() {
   if (window.openAssistant) window.openAssistant();
+
+  // 🔹 force CodeMirror to recalc width after panel animation
+  setTimeout(() => {
+    window.codeMirrorEditor.refresh();
+  }, 300); // matches your CSS transition
 }
+setTimeout(() => {
+  window.codeMirrorEditor.refresh();
+}, 300);
 
 // ----------------------
 // Chat input behavior
@@ -79,7 +88,7 @@ input.addEventListener("keypress", (e) => {
 // ----------------------
 // Toolbar AI Buttons
 // ----------------------
-const toolbarButtons = document.querySelectorAll(".toolbar button");
+const toolbarButtons = document.querySelectorAll(".toolbar .ai-action");
 const actionMap = {
   "Explain Code": "explain",
   "Generate Docs": "document",

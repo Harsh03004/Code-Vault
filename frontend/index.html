@@ -157,6 +157,13 @@
         background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
         align-items: center;
       }
+.editor-assistant {
+  transition: margin-right 0.28s cubic-bezier(.22,.9,.35,1);
+}
+
+body.assistant-open .editor-assistant {
+  margin-right: 400px;
+}
 
       .editor-assistant {
         display: flex;
@@ -173,7 +180,7 @@
         padding: 12px;
         box-sizing: border-box;
         background: #0b0c0f;
-        overflow: auto;
+        overflow: hidden;
       }
 
       /* If you initialize CodeMirror on #editor it will fill this area */
@@ -199,21 +206,22 @@
 
       /* --- Sliding Assistant Panel --- */
       .assistant-panel {
-        position: fixed;
-        top: 0;
-        right: -420px; /* hidden by default */
-        width: 400px;
-        height: 100vh;
-        background: var(--bg-panel);
-        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.6);
-        border-left: 1px solid var(--panel-border);
-        padding: 16px;
-        box-sizing: border-box;
-        transition: right 0.28s cubic-bezier(.22,.9,.35,1);
-        z-index: 1200;
-        display: flex;
-        flex-direction: column;
-      }
+  position: fixed;
+  top: 56px; /* 👈 navbar height */
+  right: -420px;
+  width: 400px;
+  height: calc(100vh - 56px); /* 👈 exclude navbar */
+  background: var(--bg-panel);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.6);
+  border-left: 1px solid var(--panel-border);
+  padding: 16px;
+  box-sizing: border-box;
+  transition: right 0.28s cubic-bezier(.22,.9,.35,1);
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+}
+
 
       .assistant-panel.open {
         right: 0;
@@ -292,24 +300,10 @@
         cursor: pointer;
       }
 
-      /* When assistant is open we optionally add a subtle overlay on the editor to show focus */
-      .assistant-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 400px; /* leave space where the assistant sits */
-        bottom: 0;
-        background: rgba(0,0,0,0.03);
-        z-index: 1150;
-        display: none;
-      }
-      .assistant-overlay.visible { display:block; }
-
       /* Responsive: on small screens assistant becomes full overlay */
       @media (max-width: 900px) {
         .assistant-panel { width: 100%; right: -100%; }
         .assistant-panel.open { right: 0; }
-        .assistant-overlay { right: 0; } /* overlay covers everything */
       }
     </style>
   </head>
@@ -351,13 +345,14 @@
       <!-- Editor + AI Assistant -->
       <div class="workspace">
         <!-- Toolbar -->
-        <div class="toolbar">
-          <button onclick="saveSnippet()" style="background: linear-gradient(90deg, #00f6ff, #4fd1c5); color: #0f1117; font-weight: bold;">💾 Save Code</button>
-          <button id="run-analysis">Run AI Analysis</button>
-          <button id="explain-code">Explain Code</button>
-          <button id="generate-docs">Generate Docs</button>
-          <button id="optimize-code">Optimize</button>
-        </div>
+      <div class="toolbar">
+  <button onclick="saveSnippet()">💾 Save Code</button>
+
+  <button class="ai-action">Run AI Analysis</button>
+  <button class="ai-action">Explain Code</button>
+  <button class="ai-action">Generate Docs</button>
+  <button class="ai-action">Optimize</button>
+</div>
 
         <div class="editor-assistant">
           <!-- Code Editor -->
@@ -371,7 +366,6 @@
     <!-- Assistant toggle & panel (overlay) -->
     <button id="assistantToggle" class="assistant-toggle" aria-expanded="false" title="Open AI Assistant">💬 AI</button>
 
-    <div id="assistantOverlay" class="assistant-overlay" tabindex="-1" aria-hidden="true"></div>
 
     <aside class="assistant-panel" id="assistantPanel" aria-hidden="true">
       <div class="assistant-header">
@@ -462,29 +456,32 @@
       (function () {
         const assistantToggle = document.getElementById('assistantToggle');
         const assistantPanel = document.getElementById('assistantPanel');
-        const assistantOverlay = document.getElementById('assistantOverlay');
         const closeAssistant = document.getElementById('closeAssistant');
         const sendBtn = document.getElementById('send-btn');
         const inputEl = document.getElementById('assistant-input');
         const chatWindow = document.getElementById('chat-window');
 
         function openAssistant() {
-          assistantPanel.classList.add('open');
-          assistantPanel.setAttribute('aria-hidden', 'false');
-          assistantToggle.setAttribute('aria-expanded', 'true');
-          assistantOverlay.classList.add('visible');
-          assistantOverlay.setAttribute('aria-hidden', 'false');
-          inputEl.focus();
-        }
+  assistantPanel.classList.add('open');
+  document.body.classList.add('assistant-open'); // ✅ THIS
+  assistantPanel.setAttribute('aria-hidden', 'false');
+  assistantToggle.setAttribute('aria-expanded', 'true');
+  inputEl.focus();
 
-        function closeAssistantPanel() {
-          assistantPanel.classList.remove('open');
-          assistantPanel.setAttribute('aria-hidden', 'true');
-          assistantToggle.setAttribute('aria-expanded', 'false');
-          assistantOverlay.classList.remove('visible');
-          assistantOverlay.setAttribute('aria-hidden', 'true');
-          assistantToggle.focus();
-        }
+  // Refresh CodeMirror after resize
+  setTimeout(() => window.codeMirrorEditor?.refresh(), 300);
+}
+
+function closeAssistantPanel() {
+  assistantPanel.classList.remove('open');
+  document.body.classList.remove('assistant-open'); // ✅ THIS
+  assistantPanel.setAttribute('aria-hidden', 'true');
+  assistantToggle.setAttribute('aria-expanded', 'false');
+  assistantToggle.focus();
+
+  setTimeout(() => window.codeMirrorEditor?.refresh(), 300);
+}
+
 
         assistantToggle.addEventListener('click', openAssistant);
         closeAssistant.addEventListener('click', closeAssistantPanel);
